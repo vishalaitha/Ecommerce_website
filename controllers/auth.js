@@ -101,8 +101,8 @@ const getbill = async (req, res) => {
     for (let i = 0; i < cart.length; i++) {
       const product = await Product.findOne({ productId: cart[i] });
       bill += product.productPrice;
-    }
-    res.send("Bill is " + bill);
+     }
+    res.send("Bill is" + bill);
   } else {
     res.send("You are not authorized to access this page");
   }
