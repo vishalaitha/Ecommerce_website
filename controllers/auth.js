@@ -30,11 +30,11 @@ async function signupUser(req, res) {
   try {
     await user.save();
     console.log("SUCCESFULLY CREATED AN ACCOUNT");
-    res.send("YOU HAVE SUCCESFULLY CREATED AN ACCOUNT " + user);
+    res.send({message:"Congrats!, You have succefully created an account " +body.username});
   } catch (err) {
     console.log(err);
     console.log("not saved");
-    res.send(err);
+    res.send({message:"Please try again with a different username"});
   }
 }
 
@@ -57,9 +57,8 @@ const loginUser = async (req, res) => {
 
 const authorization = async (req, res) => {
   const body = req.body;
-  const user = await User.findOne({username:body.username});
+  const user = await User.findOne({ username: req.body.username});
   if (!user) {
-    // console.log('here');
     return -1;
   } else if (user != null && user.password == body.password) {
     return 1;
@@ -68,9 +67,22 @@ const authorization = async (req, res) => {
   }
 };
 
+// Check if product exists in our database
+
+const productexists = async(req,res)=>{
+  const body=req.body;
+  const prod=await Product.findOne({productId:body.pid});
+  if(prod!=null){
+    return 1;
+  }
+  else{
+    return 0;
+  }
+}
 // Get all users functionality
 
 const getAllUsers = async (req, res) => {
+
   // this can be used to get all the users from the database but the access is only for admin
 
   const body = req.body;
@@ -86,8 +98,9 @@ const getAllUsers = async (req, res) => {
 // Get cart for a specific user functionality
 
 const getCart = async (req, res) => {
+  
   const body = req.body;
-  const user = await User.findOne({ username: req.params.id });
+  const user = await User.findOne({ username: req.body.username});
   const result = await authorization(req, res);
   if (result == 1) {
     const cart = user.cart;
@@ -102,9 +115,10 @@ const getCart = async (req, res) => {
 // Delete for a product
 
 const removefromcart = async (req, res) => {
-  const user = await User.findOne({ username: req.params.id });
   const result = await authorization(req, res);
   if (result == 1) {
+    const user = await User.findOne({ username: req.body.username});
+    const result=productexists(req);
     if (user.cart.includes(req.body.pid)) {
       const cart = user.cart;
       cart.pop(req.body.pid);
@@ -128,16 +142,18 @@ const removefromcart = async (req, res) => {
 
 const addtocart = async (req, res) => {
   const body = req.body;
-  const user = await User.findOne({ username: req.params.id });
+  const user = await User.findOne({ username: req.body.username});
   const result = await authorization(req, res);
   if (result == 1) {
-    const cart = user.cart;
-    if (cart.includes(req.body.pid)) {
+    const result = await productexists(req,res);
+    console.log(result);
+    if (result==1) {
       user.cart.push(req.body.pid);
       await user.save();
       res.send({ message: "Successfully added to cart", data: user.cart });
     } else {
-      res.send((message = "Product is not available in the menu"));
+      console.log("here");
+      res.send({message : "Product is not available in the menu"});
     }
   } else if (result == -1) {
     res.send({ message: "You are not a valid user" });
@@ -146,13 +162,29 @@ const addtocart = async (req, res) => {
   }
 };
 
+const clearcart = async (req, res) => {
+  console.log(req);
+  const result = await authorization(req, res);
+  if (result == 1) {
+    const user = await User.findOne({ username: req.body.username});
+    user.cart = [];
+    await user.save();
+    res.send({message:"successfully cleared the cart",data:user.cart});
+  } else if (result == -1) {
+    res.send({ message: "You are not a valid user" });
+  } else {
+    res.send("You're password is incorrect");
+  }
+}
 // Get bill for a specific user functionality
 
 const getbill = async (req, res) => {
-  const user = await User.findOne({ username: req.params.id });
+  console.log(req);
   const result = await authorization(req, res);
   // console.log("result is " + result+" "+user);
   if (result == 1) {
+    const user = await User.findOne({ username: req.body.username});
+    console.log(result);
     let bill = 0;
     const cart = user.cart;
     const dataofproducts = [];
@@ -232,4 +264,8 @@ export {
   getbill,
   showMenu,
   removefromcart,
+  clearcart
 };
+
+
+// Thanks for reading till here 😊
