@@ -19,7 +19,6 @@
     "nodemon": "^3.0.1",
     "shortid": "^2.2.16"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vishalaitha/plotlineProject.git"
