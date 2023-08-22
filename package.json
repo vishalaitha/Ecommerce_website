@@ -16,7 +16,7 @@
     "shortid": "^2.2.16"    
   },
   "scripts" : {
-    "start" : "node index"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
