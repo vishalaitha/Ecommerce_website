@@ -1,9 +1,9 @@
 import User from "../models/user.js";
 import Product from "../models/products.js";
+import Order from "../models/orders.js";
 import gst from "../controllers/tax.js";
 
-
-// Show menu functionality, THIS IS ONLY FUNCTION WHICH ANYONE CAN USE WITHOUT LOGIN CREDENTIALS
+// Show menu functionality, This is the only function which doesn't need authorization
 
 const showMenu = async (req, res) => {
   const products = await Product.find({});
@@ -30,11 +30,14 @@ async function signupUser(req, res) {
   try {
     await user.save();
     console.log("SUCCESFULLY CREATED AN ACCOUNT");
-    res.send({message:"Congrats!, You have succefully created an account " +body.username});
+    res.send({
+      message:
+        "Congrats!, You have succefully created an account " + body.username,
+    });
   } catch (err) {
     console.log(err);
     console.log("not saved");
-    res.send({message:"Please try again with a different username"});
+    res.send({ message: "Please try again with a different username" });
   }
 }
 
@@ -57,7 +60,7 @@ const loginUser = async (req, res) => {
 
 const authorization = async (req, res) => {
   const body = req.body;
-  const user = await User.findOne({ username: req.body.username});
+  const user = await User.findOne({ username: req.body.username });
   if (!user) {
     return -1;
   } else if (user != null && user.password == body.password) {
@@ -69,22 +72,19 @@ const authorization = async (req, res) => {
 
 // Check if product exists in our database
 
-const productexists = async(req,res)=>{
-  const body=req.body;
-  const prod=await Product.findOne({productId:body.pid});
-  if(prod!=null){
+const productexists = async (req, res) => {
+  const body = req.body;
+  const prod = await Product.findOne({ productId: body.pid });
+  if (prod != null) {
     return 1;
-  }
-  else{
+  } else {
     return 0;
   }
-}
+};
 // Get all users functionality
 
 const getAllUsers = async (req, res) => {
-
-  // this can be used to get all the users from the database but the access is only for admin
-
+  
   const body = req.body;
   if (body.password == "admin123" && body.username == "admin") {
     const users = await User.find({});
@@ -98,9 +98,8 @@ const getAllUsers = async (req, res) => {
 // Get cart for a specific user functionality
 
 const getCart = async (req, res) => {
-  
   const body = req.body;
-  const user = await User.findOne({ username: req.body.username});
+  const user = await User.findOne({ username: req.body.username });
   const result = await authorization(req, res);
   if (result == 1) {
     const cart = user.cart;
@@ -117,11 +116,14 @@ const getCart = async (req, res) => {
 const removefromcart = async (req, res) => {
   const result = await authorization(req, res);
   if (result == 1) {
-    const user = await User.findOne({ username: req.body.username});
-    const result=productexists(req);
-    if (user.cart.includes(req.body.pid)) {
+    const user = await User.findOne({ username: req.body.username });
+    const result = productexists(req);
+    if (
+      user.password == req.body.password &&
+      user.cart.includes(req.body.pid)
+    ) {
       const cart = user.cart;
-      cart.pop(req.body.pid);
+      cart.remove(req.body.pid);
       await user.save();
       const cartupdated = user.cart;
       res.send({
@@ -142,18 +144,17 @@ const removefromcart = async (req, res) => {
 
 const addtocart = async (req, res) => {
   const body = req.body;
-  const user = await User.findOne({ username: req.body.username});
+  const user = await User.findOne({ username: req.body.username });
   const result = await authorization(req, res);
   if (result == 1) {
-    const result = await productexists(req,res);
-    console.log(result);
-    if (result==1) {
+    const result = await productexists(req, res);
+    if (result == 1) {
       user.cart.push(req.body.pid);
       await user.save();
       res.send({ message: "Successfully added to cart", data: user.cart });
     } else {
       console.log("here");
-      res.send({message : "Product is not available in the menu"});
+      res.send({ message: "Product is not available in the menu" });
     }
   } else if (result == -1) {
     res.send({ message: "You are not a valid user" });
@@ -162,20 +163,24 @@ const addtocart = async (req, res) => {
   }
 };
 
+
+// Clear cart for a specific user functionality
+
 const clearcart = async (req, res) => {
   console.log(req);
   const result = await authorization(req, res);
   if (result == 1) {
-    const user = await User.findOne({ username: req.body.username});
+    const user = await User.findOne({ username: req.body.username });
     user.cart = [];
     await user.save();
-    res.send({message:"successfully cleared the cart",data:user.cart});
+    res.send({ message: "successfully cleared the cart", data: user.cart });
   } else if (result == -1) {
     res.send({ message: "You are not a valid user" });
   } else {
     res.send("You're password is incorrect");
   }
-}
+};
+
 // Get bill for a specific user functionality
 
 const getbill = async (req, res) => {
@@ -183,7 +188,7 @@ const getbill = async (req, res) => {
   const result = await authorization(req, res);
   // console.log("result is " + result+" "+user);
   if (result == 1) {
-    const user = await User.findOne({ username: req.body.username});
+    const user = await User.findOne({ username: req.body.username });
     console.log(result);
     let bill = 0;
     const cart = user.cart;
@@ -193,7 +198,7 @@ const getbill = async (req, res) => {
       const taxapplied = product.productPrice + gst(product);
       const qty = cart.filter((x) => x == cart[i]).length;
       dataofproducts.push(
-        "\nProduct Name: " +
+        "Product Name: " +
           product.productName +
           " || Product Price: " +
           product.productPrice +
@@ -207,6 +212,7 @@ const getbill = async (req, res) => {
       bill += taxapplied;
     }
     const productsset = new Set(dataofproducts);
+    const final = Array.from(productsset);
     res.send("Total Bill value is " + bill + "\n" + Array.from(productsset));
   } else if (result == -1) {
     res.send({ message: "You are not a valid user" });
@@ -215,46 +221,72 @@ const getbill = async (req, res) => {
   }
 };
 
-// TAX CALCULATION IS DONE IN TAX.JS FILE
+// Tax calculation is done in tax.js file
 
+const savethisorder = async (req, res) => {
 
-// This is only used when admin wants to add products to the database and if we call it once it will add evreything to the database
+  const order = new Order(req);
+  
+  try {
+    await order.save();
+    console.log(order);
+    console.log("SUCCESFULLY CREATED AN ORDER");
+  } catch (err) {
+    console.log(err);
+  }
+};
 
-// const init = async () => {
-//   const products = [
-//     {
-//       productName: "Ice Cream - Strawberry",
-//       productPrice: 9536,
-//       productId: 1423,
-//     },
-//     {
-//       productName: "Tomatoes - Diced, Canned",
-//       productPrice: 16772,
-//       productId: 1192,
-//     },
-//     { productName: "Peas - Pigeon, Dry", productPrice: 8762, productId: 1001 },
-//     { productName: "Instant Coffee", productPrice: 3952, productId: 154 },
-//     {
-//       productName: "Cheese - Pied De Vents",
-//       productPrice: 8229,
-//       productId: 652,
-//     },
-//     { productName: "Sour Puss Raspberry", productPrice: 7739, productId: 930 },
-//     { productName: "Pepsi - 600ml", productPrice: 11475, productId: 1827 },
-//     { productName: "Tea - Decaf Lipton", productPrice: 14492, productId: 478 },
-//     { productName: "Savory", productPrice: 13318, productId: 1667 },
-//     {
-//       productName: "Bread Crumbs - Japanese Style",
-//       productPrice: 12380,
-//       productId: 240,
-//     },
-//   ];
-//   products.forEach(async (p) => {
-//     let product = new Product(p);
-//     await product.save();
-//   });
-// };
-
+const getAllOrders = async (req, res) => {
+  const allorders = await Order.find({});
+  const result = allorders;
+  console.log(result);
+  res.send(result);
+};
+const placeOrder = async (req, res) => {
+  const result = await authorization(req, res);
+  if (result == 1) {
+    const user = await User.findOne({ username: req.body.username });
+    let bill = 0;
+    const cart = user.cart;
+    const dataofproducts = [];
+    for (let i = 0; i < cart.length; i++) {
+      const product = await Product.findOne({ productId: cart[i] });
+      const taxapplied = product.productPrice + gst(product);
+      const qty = cart.filter((x) => x == cart[i]).length;
+      dataofproducts.push(
+        "Product Name: " +
+          product.productName +
+          " || Product Price: " +
+          product.productPrice +
+          " || Quantity: " +
+          qty +
+          " || Before Tax " +
+          qty * product.productPrice +
+          " || After Tax: " +
+          qty * taxapplied
+      );
+      bill += taxapplied;
+    }
+    const productsset = new Set(dataofproducts);
+    const final = Array.from(productsset);
+    const obj = { username: user.username, items: final };
+    const here = {
+      username: user.username,
+      items: final,
+    };
+    const object = await savethisorder(here);
+    res.send(
+      "You're order is succesfully placed \nYour bill value is " +
+        bill +
+        "\n" +
+        final
+    );
+  } else if (result == -1) {
+    res.send({ message: "You are not a valid user" });
+  } else {
+    res.send("You're password is incorrect");
+  }
+};
 export {
   signupUser,
   loginUser,
@@ -264,8 +296,9 @@ export {
   getbill,
   showMenu,
   removefromcart,
-  clearcart
+  clearcart,
+  getAllOrders,
+  placeOrder,
 };
-
 
 // Thanks for reading till here 😊
