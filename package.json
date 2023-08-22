@@ -4,10 +4,6 @@
   "description": "node_server_mongodb_mongoose_mvc_architecture",
   "type": "module",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index"
-  },
   "author": "vishalaitha",
   "license": "ISC",
   "dependencies": {
@@ -17,7 +13,10 @@
     "mongoose": "^7.4.3",
     "nanoid": "^4.0.2",
     "nodemon": "^3.0.1",
-    "shortid": "^2.2.16"
+    "shortid": "^2.2.16"    
+  },
+  "scripts" : {
+    "start" : "node index"
   },
   "repository": {
     "type": "git",

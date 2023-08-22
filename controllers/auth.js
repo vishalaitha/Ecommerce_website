@@ -84,7 +84,6 @@ const productexists = async (req, res) => {
 // Get all users functionality
 
 const getAllUsers = async (req, res) => {
-  
   const body = req.body;
   if (body.password == "admin123" && body.username == "admin") {
     const users = await User.find({});
@@ -163,7 +162,6 @@ const addtocart = async (req, res) => {
   }
 };
 
-
 // Clear cart for a specific user functionality
 
 const clearcart = async (req, res) => {
@@ -224,9 +222,8 @@ const getbill = async (req, res) => {
 // Tax calculation is done in tax.js file
 
 const savethisorder = async (req, res) => {
-
   const order = new Order(req);
-  
+
   try {
     await order.save();
     console.log(order);

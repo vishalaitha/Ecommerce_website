@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 import authRoute from "./routes/auth.js";
 
 const app = express();
-const PORT = 8000;
+const PORT = 3000;
 
 app.use(express.json());
 
@@ -30,6 +30,6 @@ mongoose
 
   
 
-app.listen(process.env.PORT || 8000, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log("Server is running");
 });
