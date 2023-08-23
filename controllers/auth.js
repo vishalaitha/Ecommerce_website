@@ -122,7 +122,8 @@ const removefromcart = async (req, res) => {
       user.cart.includes(req.body.pid)
     ) {
       const cart = user.cart;
-      cart.remove(req.body.pid);
+      const prod=cart.findOne(req.body.pid);
+      cart.remove(prod);
       await user.save();
       const cartupdated = user.cart;
       res.send({
@@ -233,12 +234,17 @@ const savethisorder = async (req, res) => {
   }
 };
 
+// get all orders for admin functionality but right now we're not checking credentials
+
 const getAllOrders = async (req, res) => {
   const allorders = await Order.find({});
   const result = allorders;
   console.log(result);
   res.send(result);
 };
+
+// Place order functionality
+
 const placeOrder = async (req, res) => {
   const result = await authorization(req, res);
   if (result == 1) {
@@ -284,6 +290,9 @@ const placeOrder = async (req, res) => {
     res.send("You're password is incorrect");
   }
 };
+
+// exporting all the functions
+
 export {
   signupUser,
   loginUser,

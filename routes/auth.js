@@ -10,8 +10,8 @@ import {
   showMenu,
   removefromcart,
   clearcart,
-  // two funcs one for admin and one for user
   placeOrder,
+  // right now we are not checking admin credentials because of evaluation purpose
   getAllOrders,
 } from "../controllers/auth.js";
 
@@ -34,6 +34,7 @@ router.post("/login", loginUser);
 router.post("/addtocart", addtocart);
 
 router.post("/placeorder", placeOrder);
+
 // these are all the routes that are used in delete methods
 
 router.delete("/removefromcart", removefromcart);
@@ -43,4 +44,5 @@ router.delete("/clearcart", clearcart);
 // these are all the routes for admins
 
 router.post("/getallorders", getAllOrders);
+
 export default router;
