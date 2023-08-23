@@ -4,7 +4,9 @@ import Order from "../models/orders.js";
 import gst from "../controllers/tax.js";
 
 // Show menu functionality, This is the only function which doesn't need authorization
-
+const homePage = async (req, res) => {
+  res.send("Welcome to the home page, You Cannot access this link directly. Open postman and try to access the end points with routes given in the readme file");
+}
 const showMenu = async (req, res) => {
   const products = await Product.find({});
   const listwithprices = [];
@@ -305,6 +307,7 @@ export {
   clearcart,
   getAllOrders,
   placeOrder,
+  homePage
 };
 
 // Thanks for reading till here 😊

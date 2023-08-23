@@ -13,7 +13,12 @@ import {
   placeOrder,
   // right now we are not checking admin credentials because of evaluation purpose
   getAllOrders,
+  homePage
 } from "../controllers/auth.js";
+
+// Home page
+
+router.get("/", homePage);
 
 // these are the routes that are using get methods
 
