@@ -125,8 +125,7 @@ const removefromcart = async (req, res) => {
       user.cart.includes(req.body.pid)
     ) {
       const cart = user.cart;
-      const prod=cart.findOne(req.body.pid);
-      cart.remove(prod);
+      cart.remove(req.body.pid);
       await user.save();
       const cartupdated = user.cart;
       res.send({
