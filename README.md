@@ -1,6 +1,6 @@
-﻿# Project Name: PlotlineAssignment
+﻿# Project Name: Ecommerce_website
 
-## Welcome to the README file for the PlotlineAssignment project. This document provides an overview of the project's main routes, their purposes, and how to use them.
+## Welcome to the README file for the Ecommerce_website project. This document provides an overview of the project's main routes, their purposes, and how to use them.
 ## Feel free to check this video to see how it is working
 https://www.youtube.com/watch?v=<https://youtu.be/H2aBeIF3wYY>
 
@@ -18,7 +18,7 @@ git clone <repository_url>
 
 2. Navigate to the project directory:
 ```bash
-cd PlotlineAssignment
+cd Ecommerce_website
 ```
 
 3. Install the required dependencies:
