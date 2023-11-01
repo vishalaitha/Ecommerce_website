@@ -8,7 +8,7 @@ https://www.youtube.com/watch?v=<https://youtu.be/H2aBeIF3wYY>
 This project is a backend web application developed as part of an assignment. It provides a range of API endpoints that allow users to interact with the system. Below are the key endpoints that you can use to access different features of the application:
 
 ## Website Link
-The main link for accessing the website is: https://vishalaithaplotline.cyclic.cloud/auth/
+The main link for accessing the website is: https://victorious-sock-dog.cyclic.app/auth/
 
 ## Installation
 1. Clone the repository to your local machine:
