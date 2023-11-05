@@ -5,7 +5,7 @@ import gst from "../controllers/tax.js";
 
 // Show menu functionality, This is the only function which doesn't need authorization
 const homePage = async (req, res) => {
-  "Welcome to the home page, You Cannot access this link directly. Open postman and try to access the end points with routes given in the readme file";
+  "Welcome to the home page, You Cannot access this link directly. Open any api testing platform like 'Postman' and try to access the end points with routes given in the readme file";
   res.send("Welcome to the home page, You Cannot access this link directly. Open postman and try to access the end points with routes given in the readme file");
 }
 const showMenu = async (req, res) => {
